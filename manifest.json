@@ -3,8 +3,17 @@
     "name": "FocusBloc",
     "version": "0.1.0",
     "description": "Para ayudar a tu concentracion",
-    "permissions": ["history","storage","tabs"],
+    "permissions": [
+        "history",
+        "storage",
+        "tabs",
+        "declarativeNetRequest",
+        "declarativeNetRequest.updateDynamicRules"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
     "background": {
-      "service_worker": "background.js"
+        "service_worker": "background.js"
     }
-  }
+}
