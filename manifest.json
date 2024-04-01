@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "FocusBloc",
+    "version": "0.1.0",
+    "description": "Para ayudar a tu concentracion",
+    "permissions": ["history","storage","tabs"],
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
