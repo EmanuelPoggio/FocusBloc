@@ -5,7 +5,10 @@ let pomodoroTimer = null;
 let currentSessionType = 'work';
 let WORK_TIME = 30 * 60 * 1000;
 let BREAK_TIME = 30 * 60 * 1000;
-//const alarmSound = new Audio('./sounds/alarm-sound.mp3');
+let remainingTime = 0;
+let endTime = 0;
+
+
 
 //guardamos el host en base a la url
 function getHostName(url) {
@@ -103,85 +106,129 @@ chrome.tabs.onRemoved.addListener(tabId => {
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     switch (message.command) {
         case 'start':
-            WORK_TIME = parseInt(message.workTime) * 60 * 1000;
-            BREAK_TIME = parseInt(message.breakTime) * 60 * 1000;
-            startPomodoro();
+            if (!isPomodoroRunning) {
+                startNewPomodoro(message.workTime, message.breakTime);
+            }
+            //WORK_TIME = parseInt(message.workTime) * 60 * 1000;
+            //BREAK_TIME = parseInt(message.breakTime) * 60 * 1000;
+            //startPomodoro();
+            break;
+        case 'continue':
+            if (!isPomodoroRunning && remainingTime > 0){
+                continuePomodoro();
+            }
             break;
         case 'pause':
             pausePomodoro();
             break;
-        case 'stop':
-            stopPomodoro();
+        case 'reset':
+            resetPomodoro();
+            break;
+        case 'init':
+            sendInitialState();
             break;
     }
     if (message.command === 'start') {
         startPomodoro();
     } else if (message.command === 'pause') {
         pausePomodoro();
-    } else if (message.command === 'stop') {
-        stopPomodoro();
+    } else if (message.command === 'reset') {
+        resetPomodoro();
     }
 });
+function sendInitialState(){
+    chrome.storage.local.get('currentSessionType', function(data){
+        currentSessionType = data.currentSessionType || 'work';
+        updateTimerDisplay(currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
+    });
+}
 function playSound() {
     chrome.runtime.sendMessage({command: "playSound"});
 }
 function showNotificationPomodoro(sessionType) {
-    chrome.notifications.create({
+    let notificationOptions = {
         type: 'basic',
         iconUrl: './images/timer.png',
         title: 'Pomodoro Timer',
         message: sessionType === 'work' ? '¡Tiempo de trabajo completado!' : '¡Descanso completado!',
         priority: 2
-    });
+    };
+
+    chrome.notifications.create(notificationOptions, function(notificationId) {
+        console.log("Notificacion mostrada para " + sessionType);
+    }) ;
 } 
-function updateTimerDisplay(timeLeft) {
+function updateTimerDisplay(remainingTime){
     let sessionLabel = currentSessionType === 'work' ? 'Trabajo' : 'Descanso';
-    chrome.runtime.sendMessage({timeLeft: timeLeft, sessionLabel: sessionLabel});
+    chrome.runtime.sendMessage({timeLeft: remainingTime, sessionLabel: sessionLabel});
 }
 function startPomodoro() {
     if (!isPomodoroRunning) {
         isPomodoroRunning = true;
-        let endTime = Date.now() + (currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
-        pomodoroTimer = setInterval(() => {
-            let now = Date.now();
-            let timeLeft = endTime - now;
-            if (timeLeft < 0) {
-                clearInterval(pomodoroTimer);
-                handlePomodoroTimeout();
+        chrome.storage.local.get('currentSessionType', function(data) {
+            currentSessionType = data.currentSessionType || 'work';
+            let startTime = Date.now();
+            if (remainingTime <= 0) {
+                endTime = startTime + (currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
             } else {
-                updateTimerDisplay(timeLeft);
+                endTime = startTime + remainingTime;
             }
-        }, 1000);
+
+            pomodoroTimer = setInterval(() => {
+                let now = Date.now();
+                remainingTime = endTime - now;
+                if (remainingTime < 0) {
+                    clearInterval(pomodoroTimer);
+                    isPomodoroRunning = false;
+                    handlePomodoroTimeout();
+                } else {
+                    updateTimerDisplay(remainingTime);
+                }
+            }, 1000);
+        });
+    }
+}
+function startNewPomodoro(workTime, breakTime) {
+    WORK_TIME = parseInt(workTime) * 60 * 1000;
+    BREAK_TIME = parseInt(breakTime) * 60 * 1000;
+    startPomodoro();
+}
+function continuePomodoro(){
+    if (!isPomodoroRunning && remainingTime > 0) {
+        startPomodoro();
     }
 }
 function pausePomodoro() {
     if (isPomodoroRunning) {
         clearTimeout(pomodoroTimer);
         isPomodoroRunning = false;
+        let now = Date.now();
+        remainingTime = endTime - now;
         console.log(`Pomodoro paused`);
     }
 }
-function stopPomodoro() {
+function resetPomodoro() {
     if (isPomodoroRunning) {
         clearTimeout(pomodoroTimer);
         isPomodoroRunning = false;
-        currentSessionType = 'work'; //Aca paramos la sesion de trabajo
-        console.log(`Pomodoro stopped`);
+        currentSessionType = 'work';
+        remainingTime = 0;  
+        WORK_TIME = 30 * 60 * 1000;
+        REST_TIME = 30 * 60 * 1000;
+
+        chrome.storage.local.set({'currentSessionType': currentSessionType});
+
+        updateTimerDisplay(WORK_TIME);
+        console.log(`Pomodoro reseted`);
+        chrome.runtime.sendMessage({command: "resetUI"});
     }
 }
 function handlePomodoroTimeout() {
-    if (currentSessionType === 'work') {
-        currentSessionType = 'break';
-        console.log('Sesion de trabajo finalizada. Empezamos el descanso');
-        playSound();
-        showNotificationPomodoro(currentSessionType);
-        pomodoroTimer = setTimeout(handlePomodoroTimeout, BREAK_TIME);
-    } else {
-        currentSessionType = 'work';
-        console.log('Descanso finalizado. Empieza la sesion de trabajo');
-        playSound();
-        showNotificationPomodoro(currentSessionType);
-        pomodoroTimer = setTimeout(handlePomodoroTimeout, WORK_TIME);
-    }
-    updateTimerDisplay(WORK_TIME)
+    currentSessionType = currentSessionType === 'work' ? 'break' : 'work';
+    chrome.storage.local.set({'currentSessionType': currentSessionType});
+    console.log(currentSessionType === 'work' ? 'Descanso finalizado. Empieza la sesión de trabajo.' : 'Sesión de trabajo finalizada. Empezamos el descanso.');
+
+    playSound();
+    showNotificationPomodoro(currentSessionType);
+    startPomodoro();
 }
