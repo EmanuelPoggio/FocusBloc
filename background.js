@@ -1,33 +1,38 @@
 let tabTimes = {};
 let totalTimePerSite = {};
+let isPomodoroRunning = false;
+let pomodoroTimer = null;
+let currentSessionType = 'work';
+let WORK_TIME = 30 * 60 * 1000;
+let BREAK_TIME = 30 * 60 * 1000;
+//const alarmSound = new Audio('./sounds/alarm-sound.mp3');
 
 //guardamos el host en base a la url
 function getHostName(url) {
     try {
         let hostname = new URL(url).hostname;
-        console.log(`Hostname extraído: ${hostname}`);
+        //console.log(`Hostname extraído: ${hostname}`);
         return hostname;
     } catch (error){
-        console.error('Error al obtener el hostname:', error);
+        //console.error('Error al obtener el hostname:', error);
         return null;
     }
 }
-
 //actualizamos el tiempo total que se va gastando en el host
 function updateTotalTime(url, timeSpent) { 
     let hostname = getHostName(url);
     if (hostname){
-        if (totalTimePerSite[hostname]) {
-            totalTimePerSite[hostname] += timeSpent;
-        } else {
-            totalTimePerSite[hostname] = timeSpent;
-        }
-        console.log(`Tiempo actualizado para ${hostname}: ${totalTimePerSite[hostname]} ms`);
+        chrome.storage.local.get(["totalTimePerSite"], (result) => {
+            let totalTime = result.totalTimePerSite || {};
+            totalTime[hostname] = totalTime[hostname] || 0;
+            totalTime[hostname] += timeSpent;
+            chrome.storage.local.set({ totalTimePerSite: totalTime}, () => {
+                //console.log(`Tiempo actualizado para ${hostname}: ${totalTime[hostname]} ms`);
+            });
+        });
     }
-    
 }
-
-//para bloquear paginas una vez que pasa cierto periodo de tiempo
+/* /para bloquear paginas una vez que pasa cierto periodo de tiempo
 function checkAndBlockSite(hostname) {
     console.log(`Verificando si se debe bloquear el sitio: ${hostname}`);
     console.log(`Tiempo acumulado en ${hostname}: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
@@ -48,8 +53,7 @@ function checkAndBlockSite(hostname) {
     }else {
         console.log(`No se bloquea ${hostname}. Tiempo actual: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
     }
-}
-
+} */
 //para convertir los milisegundos a segundos y minutos
 function convertMsToMinSec(milliseconds) {
     let totalSeconds = Math.floor(milliseconds / 1000);
@@ -57,46 +61,127 @@ function convertMsToMinSec(milliseconds) {
     let seconds = totalSeconds % 60;
     return `${minutes} min ${seconds} sec`;
 }
-
-
-
-
-
-
 //listener para cuando se esta en la tab
 chrome.tabs.onActivated.addListener(activeInfo => {
     let tabId = activeInfo.tabId;
-    if (!tabTimes[tabId]) {
-        tabTimes[tabId] = {
-            startTime: Date.now(),
-            url: ''
-        };
-    }
-
-    chrome.tabs.get(tabId, (tab) => {
-        tabTimes[tabId].url = tab.url;
-    });
-
-    // Registrar el tiempo de la pestaña previamente activa
-    Object.keys(tabTimes).forEach((id) => {
-        if (parseInt(id) !== tabId && tabTimes[id].url !== '') {
-            let duration = Date.now() - tabTimes[id].startTime;
-            updateTotalTime(tabTimes[id].url, duration);
-            let hostname = getHostName(tabTimes[id].url);
-            checkAndBlockSite(hostname);
-            console.log(`URL: ${tabTimes[id].url} - Duration: ${convertMsToMinSec(duration)} - Total Time: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-            tabTimes[id].startTime = Date.now(); // Reiniciar el contador para la nueva pestaña
+    chrome.tabs.get(tabId,(tab) =>{
+        console.log(`Pestaña activada: ID = ${tabId}, URL = ${tab.url}, Tiempo = ${new Date().toLocaleTimeString()}`);
+        if (!tabTimes[tabId]) {
+            tabTimes[tabId] = {
+                startTime: Date.now(),
+                url: tab.url
+            };
+        } else {
+            tabTimes[tabId].startTime = Date.now()
         }
+        // Registrar el tiempo de la pestaña previamente activa
+        Object.keys(tabTimes).forEach((id) => {
+            if (parseInt(id) !== tabId && tabTimes[id].url !== '') {
+                let duration = Date.now() - tabTimes[id].startTime;
+                updateTotalTime(tabTimes[id].url, duration);
+                //let hostname = getHostName(tabTimes[id].url);
+                //checkAndBlockSite(hostname);
+                //console.log(`URL: ${tabTimes[id].url} - Duration: ${convertMsToMinSec(duration)} - Total Time: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
+                tabTimes[id].startTime = Date.now(); // Reiniciar el contador para la nueva pestaña
+            }
+        });
     });
 });
 //listener para cuando se cambia de tab
 chrome.tabs.onRemoved.addListener(tabId => {
-    if (tabTimes[tabId]) {
-        let hostname = getHostName(tabTimes[tabId].url); 
+    if (tabTimes[tabId] && tabTimes[tabId].url) {
         let duration = Date.now() - tabTimes[tabId].startTime;
+        let formattedDuration = convertMsToMinSec(duration);
+        console.log(`Tab closed. URL: ${tabTimes[tabId].url} - Duration: ${formattedDuration}`);
         updateTotalTime(tabTimes[tabId].url, duration);
-        console.log(`Tab closed. URL: ${tabTimes[tabId].url} - Duration: ${convertMsToMinSec(duration)} - Total Time: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-        checkAndBlockSite(hostname);
         delete tabTimes[tabId];
     }
 });
+
+//---------------POMODORO---------------------------------------
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    switch (message.command) {
+        case 'start':
+            WORK_TIME = parseInt(message.workTime) * 60 * 1000;
+            BREAK_TIME = parseInt(message.breakTime) * 60 * 1000;
+            startPomodoro();
+            break;
+        case 'pause':
+            pausePomodoro();
+            break;
+        case 'stop':
+            stopPomodoro();
+            break;
+    }
+    if (message.command === 'start') {
+        startPomodoro();
+    } else if (message.command === 'pause') {
+        pausePomodoro();
+    } else if (message.command === 'stop') {
+        stopPomodoro();
+    }
+});
+function playSound() {
+    chrome.runtime.sendMessage({command: "playSound"});
+}
+function showNotificationPomodoro(sessionType) {
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: './images/timer.png',
+        title: 'Pomodoro Timer',
+        message: sessionType === 'work' ? '¡Tiempo de trabajo completado!' : '¡Descanso completado!',
+        priority: 2
+    });
+} 
+function updateTimerDisplay(timeLeft) {
+    let sessionLabel = currentSessionType === 'work' ? 'Trabajo' : 'Descanso';
+    chrome.runtime.sendMessage({timeLeft: timeLeft, sessionLabel: sessionLabel});
+}
+function startPomodoro() {
+    if (!isPomodoroRunning) {
+        isPomodoroRunning = true;
+        let endTime = Date.now() + (currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
+        pomodoroTimer = setInterval(() => {
+            let now = Date.now();
+            let timeLeft = endTime - now;
+            if (timeLeft < 0) {
+                clearInterval(pomodoroTimer);
+                handlePomodoroTimeout();
+            } else {
+                updateTimerDisplay(timeLeft);
+            }
+        }, 1000);
+    }
+}
+function pausePomodoro() {
+    if (isPomodoroRunning) {
+        clearTimeout(pomodoroTimer);
+        isPomodoroRunning = false;
+        console.log(`Pomodoro paused`);
+    }
+}
+function stopPomodoro() {
+    if (isPomodoroRunning) {
+        clearTimeout(pomodoroTimer);
+        isPomodoroRunning = false;
+        currentSessionType = 'work'; //Aca paramos la sesion de trabajo
+        console.log(`Pomodoro stopped`);
+    }
+}
+function handlePomodoroTimeout() {
+    if (currentSessionType === 'work') {
+        currentSessionType = 'break';
+        console.log('Sesion de trabajo finalizada. Empezamos el descanso');
+        playSound();
+        showNotificationPomodoro(currentSessionType);
+        pomodoroTimer = setTimeout(handlePomodoroTimeout, BREAK_TIME);
+    } else {
+        currentSessionType = 'work';
+        console.log('Descanso finalizado. Empieza la sesion de trabajo');
+        playSound();
+        showNotificationPomodoro(currentSessionType);
+        pomodoroTimer = setTimeout(handlePomodoroTimeout, WORK_TIME);
+    }
+    updateTimerDisplay(WORK_TIME)
+}
