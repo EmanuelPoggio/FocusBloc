@@ -40,3 +40,8 @@ chrome.runtime.onMessage.addListener(function(message) {
 document.getElementById('reset-btn').addEventListener('click', function() {
     chrome.runtime.sendMessage({command: "reset"});
 });
+document.getElementById('show-time-btn').addEventListener('click', () => {
+    chrome.action.setPopup({popup: 'site-time.html'}, () => {
+        window.location.href = 'site-time.html'; 
+    });
+});

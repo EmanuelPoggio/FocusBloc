@@ -8,9 +8,8 @@ let BREAK_TIME = 30 * 60 * 1000;
 let remainingTime = 0;
 let endTime = 0;
 
+//----------Calculando tiempo por Host--------------
 
-
-//guardamos el host en base a la url
 function getHostName(url) {
     try {
         let hostname = new URL(url).hostname;
@@ -21,21 +20,19 @@ function getHostName(url) {
         return null;
     }
 }
-//actualizamos el tiempo total que se va gastando en el host
-function updateTotalTime(url, timeSpent) { 
+function updateTotalTime(url, timeSpent) {
     let hostname = getHostName(url);
-    if (hostname){
-        chrome.storage.local.get(["totalTimePerSite"], (result) => {
+    if (hostname) {
+        chrome.storage.local.get(['totalTimePerSite'], function(result) {
             let totalTime = result.totalTimePerSite || {};
-            totalTime[hostname] = totalTime[hostname] || 0;
-            totalTime[hostname] += timeSpent;
-            chrome.storage.local.set({ totalTimePerSite: totalTime}, () => {
-                //console.log(`Tiempo actualizado para ${hostname}: ${totalTime[hostname]} ms`);
+            totalTime[hostname] = (totalTime[hostname] || 0) + timeSpent;
+            chrome.storage.local.set({totalTimePerSite: totalTime}, function() {
+                console.log(`Tiempo actualizado para ${hostname}: ${totalTime[hostname]} ms`);
             });
         });
     }
 }
-/* /para bloquear paginas una vez que pasa cierto periodo de tiempo
+/* 
 function checkAndBlockSite(hostname) {
     console.log(`Verificando si se debe bloquear el sitio: ${hostname}`);
     console.log(`Tiempo acumulado en ${hostname}: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
@@ -57,14 +54,12 @@ function checkAndBlockSite(hostname) {
         console.log(`No se bloquea ${hostname}. Tiempo actual: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
     }
 } */
-//para convertir los milisegundos a segundos y minutos
 function convertMsToMinSec(milliseconds) {
     let totalSeconds = Math.floor(milliseconds / 1000);
     let minutes = Math.floor(totalSeconds / 60);
     let seconds = totalSeconds % 60;
     return `${minutes} min ${seconds} sec`;
 }
-//listener para cuando se esta en la tab
 chrome.tabs.onActivated.addListener(activeInfo => {
     let tabId = activeInfo.tabId;
     chrome.tabs.get(tabId,(tab) =>{
@@ -90,7 +85,6 @@ chrome.tabs.onActivated.addListener(activeInfo => {
         });
     });
 });
-//listener para cuando se cambia de tab
 chrome.tabs.onRemoved.addListener(tabId => {
     if (tabTimes[tabId] && tabTimes[tabId].url) {
         let duration = Date.now() - tabTimes[tabId].startTime;
