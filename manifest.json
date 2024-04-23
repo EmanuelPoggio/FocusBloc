@@ -8,12 +8,18 @@
         "storage",
         "tabs",
         "declarativeNetRequest",
-        "declarativeNetRequest.updateDynamicRules"
+        "declarativeNetRequest.updateDynamicRules",
+        "chrome.runtime.sendMessage",
+        "notifications",
+        "tts"
     ],
     "host_permissions": [
         "<all_urls>"
     ],
     "background": {
         "service_worker": "./scripts/background.js"
+    },
+    "action": {
+    "default_popup": "./pages/popup.html"
     }
 }
