@@ -1,0 +1,22 @@
+/* block-sites.css */
+li {
+    margin: 5px;
+    padding: 5px;
+    list-style: none; /* Remueve los bullets de los items de la lista */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+li button {
+    padding: 0.5em 1em;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+li button:hover {
+    background-color: darkred;
+}

@@ -9,6 +9,7 @@
         "tabs",
         "declarativeNetRequest",
         "declarativeNetRequest.updateDynamicRules",
+        "declarativeNetRequestWithHostAccess",
         "chrome.runtime.sendMessage",
         "notifications",
         "tts"

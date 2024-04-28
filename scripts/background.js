@@ -32,28 +32,6 @@ function updateTotalTime(url, timeSpent) {
         });
     }
 }
-/* 
-function checkAndBlockSite(hostname) {
-    console.log(`Verificando si se debe bloquear el sitio: ${hostname}`);
-    console.log(`Tiempo acumulado en ${hostname}: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-
-    if (hostname === "www.youtube.com" && totalTimePerSite[hostname] >= 60000) {
-        console.log(`Bloqueando ${hostname} porque se excedió el límite de tiempo.`);
-        let rule = {
-            "id": 1,
-            "priority": 1,
-            "action": { "type": "block" },
-            "condition": { "urlFilter": "||youtube.com", "resourceTypes": ["main_frame"] }
-        };
-
-        chrome.declarativeNetRequest.updateDynamicRules({
-            addRules: [rule],
-            removeRuleIds: [1]
-        });
-    }else {
-        console.log(`No se bloquea ${hostname}. Tiempo actual: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-    }
-} */
 function convertMsToMinSec(milliseconds) {
     let totalSeconds = Math.floor(milliseconds / 1000);
     let minutes = Math.floor(totalSeconds / 60);
@@ -142,7 +120,7 @@ function playSound() {
 function showNotificationPomodoro(sessionType) {
     let notificationOptions = {
         type: 'basic',
-        iconUrl: './images/timer.png',
+        iconUrl: '../images/icons/timer.png',
         title: 'Pomodoro Timer',
         message: sessionType === 'work' ? '¡Tiempo de trabajo completado!' : '¡Descanso completado!',
         priority: 2
@@ -225,4 +203,59 @@ function handlePomodoroTimeout() {
     playSound();
     showNotificationPomodoro(currentSessionType);
     startPomodoro();
+}
+//---------------Bloqueo de host----------------
+chrome.runtime.onInstalled.addListener(()=>{
+    chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds:[1],
+        addRules: [
+            {
+                id:1,
+                priority: 1,
+                action:{ type: 'block'},
+                condition:{
+                    urlFilter: '|*|',
+                    resourceTypes: ['main_frame']
+                }
+            }
+        ]
+    });
+});
+function updateBlockedSites(blockedSites){
+    chrome.declarativeNetRequest.getDynamicRules((rules) => {
+        const existingRuleIds = rules.map(rule => rule.id);
+        const newRules = blockedSites.map((site,index) => ({
+            id: index + 1,
+            priority: 1,
+            action: { type: 'block'},
+            condition: { 
+            urlFilter: `*://${site}/*`,
+            resourceTypes: ['main_frame']
+            }
+        }));
+        chrome.declarativeNetRequest.updateDynamicRules({
+            remoteRuleIds: existingRuleIds,
+            addRules: newRules
+        }, () => {
+            console.log("Reglas de bloqueo actualizadas correctamente.");
+        });
+    });
+}
+chrome.runtime.onStartup.addListener(() => {
+    chrome.storage.local.get(['blockedSites'], function(result) {
+        updateBlockedSites(result.blockedSites || []);
+    });
+});
+function unblockSite(index) {
+    chrome.storage.local.get(['blockedSites'], function(result) {
+        const blockedSites = result.blockedSites || [];
+        if (index >= 0 && index < blockedSites.length) {
+            blockedSites.splice(index, 1);  
+            chrome.storage.local.set({'blockedSites': blockedSites}, () => {
+                console.log(`Sitio eliminado de la lista de bloqueo: ${siteRemoved}`);
+                updateBlockedSites(blockedSites); 
+                displayBlockedSites(blockedSites);  
+            });
+        }
+    });
 }

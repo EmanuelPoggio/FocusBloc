@@ -1,4 +1,3 @@
-// popup.js
 let isPaused = false;
 
 chrome.runtime.onMessage.addListener(function(message) {
