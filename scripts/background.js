@@ -226,3 +226,15 @@ function handlePomodoroTimeout() {
     showNotificationPomodoro(currentSessionType);
     startPomodoro();
 }
+
+function storeMessage(phrase) {
+    chrome.storage.local.get({ customMessages: [] }, function(data) {
+        var customMessages = data.customMessages || [];
+        customMessages.push(phrase);
+        chrome.storage.local.set({ customMessages: customMessages });
+    });
+}
+
+storeMessage("Esta es una frase personalizada 1.");
+storeMessage("Esta es una frase personalizada 2.");
+storeMessage("Esta es una frase personalizada 3.");

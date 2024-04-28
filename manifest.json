@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "FocusBloc",
     "version": "0.1.0",
-    "description": "Para ayudar a tu concentracion",
+    "description": "Para ayudar a tu concentración",
     "permissions": [
         "history",
         "storage",
@@ -20,6 +20,11 @@
         "service_worker": "./scripts/background.js"
     },
     "action": {
-    "default_popup": "./pages/popup.html"
+        "default_popup": "./pages/popup.html",
+        "default_icon": {
+            "16": "/images/icons/principalIcon.png",
+            "48": "/images/icons/principalIcon.png",
+            "128": "/images/icons/principalIcon.png"
+        }
     }
 }

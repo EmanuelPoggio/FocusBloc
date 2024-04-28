@@ -1,0 +1,7 @@
+#about-us-image {
+    position: fixed;
+    bottom: 10px;
+    left: 15px;
+    width: 20px; /* Tamaño pequeño */
+    height: 20px; /* Tamaño pequeño */
+}
