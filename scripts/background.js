@@ -13,13 +13,12 @@ let endTime = 0;
 function getHostName(url) {
     try {
         let hostname = new URL(url).hostname;
-        //console.log(`Hostname extraído: ${hostname}`);
         return hostname;
     } catch (error){
-        //console.error('Error al obtener el hostname:', error);
         return null;
     }
 }
+
 function updateTotalTime(url, timeSpent) {
     let hostname = getHostName(url);
     if (hostname) {
@@ -32,64 +31,38 @@ function updateTotalTime(url, timeSpent) {
         });
     }
 }
-/* 
-function checkAndBlockSite(hostname) {
-    console.log(`Verificando si se debe bloquear el sitio: ${hostname}`);
-    console.log(`Tiempo acumulado en ${hostname}: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
 
-    if (hostname === "www.youtube.com" && totalTimePerSite[hostname] >= 60000) {
-        console.log(`Bloqueando ${hostname} porque se excedió el límite de tiempo.`);
-        let rule = {
-            "id": 1,
-            "priority": 1,
-            "action": { "type": "block" },
-            "condition": { "urlFilter": "||youtube.com", "resourceTypes": ["main_frame"] }
-        };
-
-        chrome.declarativeNetRequest.updateDynamicRules({
-            addRules: [rule],
-            removeRuleIds: [1]
-        });
-    }else {
-        console.log(`No se bloquea ${hostname}. Tiempo actual: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-    }
-} */
 function convertMsToMinSec(milliseconds) {
     let totalSeconds = Math.floor(milliseconds / 1000);
     let minutes = Math.floor(totalSeconds / 60);
     let seconds = totalSeconds % 60;
     return `${minutes} min ${seconds} sec`;
 }
+
 chrome.tabs.onActivated.addListener(activeInfo => {
     let tabId = activeInfo.tabId;
-    chrome.tabs.get(tabId,(tab) =>{
-        console.log(`Pestaña activada: ID = ${tabId}, URL = ${tab.url}, Tiempo = ${new Date().toLocaleTimeString()}`);
+    chrome.tabs.get(tabId, (tab) => {
         if (!tabTimes[tabId]) {
             tabTimes[tabId] = {
                 startTime: Date.now(),
                 url: tab.url
             };
         } else {
-            tabTimes[tabId].startTime = Date.now()
+            tabTimes[tabId].startTime = Date.now();
         }
-        // Registrar el tiempo de la pestaña previamente activa
         Object.keys(tabTimes).forEach((id) => {
             if (parseInt(id) !== tabId && tabTimes[id].url !== '') {
                 let duration = Date.now() - tabTimes[id].startTime;
                 updateTotalTime(tabTimes[id].url, duration);
-                //let hostname = getHostName(tabTimes[id].url);
-                //checkAndBlockSite(hostname);
-                //console.log(`URL: ${tabTimes[id].url} - Duration: ${convertMsToMinSec(duration)} - Total Time: ${convertMsToMinSec(totalTimePerSite[hostname])}`);
-                tabTimes[id].startTime = Date.now(); // Reiniciar el contador para la nueva pestaña
+                tabTimes[id].startTime = Date.now();
             }
         });
     });
 });
+
 chrome.tabs.onRemoved.addListener(tabId => {
     if (tabTimes[tabId] && tabTimes[tabId].url) {
         let duration = Date.now() - tabTimes[tabId].startTime;
-        let formattedDuration = convertMsToMinSec(duration);
-        console.log(`Tab closed. URL: ${tabTimes[tabId].url} - Duration: ${formattedDuration}`);
         updateTotalTime(tabTimes[tabId].url, duration);
         delete tabTimes[tabId];
     }
@@ -103,9 +76,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             if (!isPomodoroRunning) {
                 startNewPomodoro(message.workTime, message.breakTime);
             }
-            //WORK_TIME = parseInt(message.workTime) * 60 * 1000;
-            //BREAK_TIME = parseInt(message.breakTime) * 60 * 1000;
-            //startPomodoro();
             break;
         case 'continue':
             if (!isPomodoroRunning && remainingTime > 0){
@@ -130,15 +100,18 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         resetPomodoro();
     }
 });
+
 function sendInitialState(){
     chrome.storage.local.get('currentSessionType', function(data){
         currentSessionType = data.currentSessionType || 'work';
         updateTimerDisplay(currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
     });
 }
+
 function playSound() {
     chrome.runtime.sendMessage({command: "playSound"});
 }
+
 function showNotificationPomodoro(sessionType) {
     let notificationOptions = {
         type: 'basic',
@@ -150,12 +123,14 @@ function showNotificationPomodoro(sessionType) {
 
     chrome.notifications.create(notificationOptions, function(notificationId) {
         console.log("Notificacion mostrada para " + sessionType);
-    }) ;
-} 
+    });
+}
+
 function updateTimerDisplay(remainingTime){
     let sessionLabel = currentSessionType === 'work' ? 'Trabajo' : 'Descanso';
     chrome.runtime.sendMessage({timeLeft: remainingTime, sessionLabel: sessionLabel});
 }
+
 function startPomodoro() {
     if (!isPomodoroRunning) {
         isPomodoroRunning = true;
@@ -182,16 +157,19 @@ function startPomodoro() {
         });
     }
 }
+
 function startNewPomodoro(workTime, breakTime) {
     WORK_TIME = parseInt(workTime) * 60 * 1000;
     BREAK_TIME = parseInt(breakTime) * 60 * 1000;
     startPomodoro();
 }
+
 function continuePomodoro(){
     if (!isPomodoroRunning && remainingTime > 0) {
         startPomodoro();
     }
 }
+
 function pausePomodoro() {
     if (isPomodoroRunning) {
         clearTimeout(pomodoroTimer);
@@ -201,6 +179,7 @@ function pausePomodoro() {
         console.log(`Pomodoro paused`);
     }
 }
+
 function resetPomodoro() {
     if (isPomodoroRunning) {
         clearTimeout(pomodoroTimer);
@@ -217,6 +196,7 @@ function resetPomodoro() {
         chrome.runtime.sendMessage({command: "resetUI"});
     }
 }
+
 function handlePomodoroTimeout() {
     currentSessionType = currentSessionType === 'work' ? 'break' : 'work';
     chrome.storage.local.set({'currentSessionType': currentSessionType});
@@ -227,14 +207,28 @@ function handlePomodoroTimeout() {
     startPomodoro();
 }
 
-function storeMessage(phrase) {
-    chrome.storage.local.get({ customMessages: [] }, function(data) {
+function storeMessagesSequentially(messages) {
+    if (messages.length === 0) return;
+    let message = messages.shift();
+    chrome.storage.local.get('customMessages', function(data) {
         var customMessages = data.customMessages || [];
-        customMessages.push(phrase);
-        chrome.storage.local.set({ customMessages: customMessages });
+        if (!customMessages.includes(message)) {
+            customMessages.push(message);
+            chrome.storage.local.set({ customMessages: customMessages }, function() {
+                console.log('Mensajes almacenados:', customMessages);
+                storeMessagesSequentially(messages); // Store the next message
+            });
+        } else {
+            storeMessagesSequentially(messages); // Skip to the next message
+        }
     });
 }
 
-storeMessage("Esta es una frase personalizada 1.");
-storeMessage("Esta es una frase personalizada 2.");
-storeMessage("Esta es una frase personalizada 3.");
+// Agregar nuevas frases secuencialmente
+storeMessagesSequentially([
+    "Esta es una frase personalizada 1.",
+    "Esta es una frase personalizada 2.",
+    "Esta es una frase personalizada 3.",
+    "Esta es una frase personalizada 4.",
+    "Hola"
+]);
