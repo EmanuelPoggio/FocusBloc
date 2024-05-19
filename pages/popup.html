@@ -4,21 +4,29 @@
     <link rel="stylesheet" type="text/css" href="../styles/popup.css">
     <link rel="stylesheet" type="text/css" href="../styles/aboutUsButton.css">
     <link rel="stylesheet" type="text/css" href="../styles/motivationalPhrase.css">
+    <link rel="stylesheet" type="text/css" href="../styles/url.css">
 </head>
 <body>
     <h1>Bienvenido a FocusBloc</h1>
+
     <div id="main-menu">
-        <button id="open-pomodoro">Pomodoro</button>
-        <button id="open-site-timer">Site Timer</button>
-        <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="Sobre nosotros">
+        <div id="url-form">
+            <input type="text" id="url-input" placeholder="Ingresa una URL">
+            <button id="add-url">Agregar URL</button>
+        </div>
     </div>
 
-    <div id="motivational-message"></div> <!-- Div  frase motivacional -->
+    <div id="url-list-container">
+        <ul id="url-list"></ul>
+    </div>
+    <div id="motivational-message"></div> 
 
-    <script src="../scripts/motivationalPhrase.js"></script> <!-- script frases motivacionales -->
+       <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="About Us">
+
+    <script src="../scripts/motivationalPhrase.js"></script>
     <script src="../scripts/popup.js"></script>
-    <script src="../scripts/aboutUsButton.js"></script><!-- script boton de informacion -->
-
+    <script src="../scripts/aboutUsButton.js"></script>
+    <script src="../scripts/addUrl.js"></script>
 </body>
 </html>
 

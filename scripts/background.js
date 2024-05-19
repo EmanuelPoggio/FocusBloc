@@ -91,6 +91,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         case 'init':
             sendInitialState();
             break;
+        case 'getMotivationalPhrases':
+            sendMotivationalPhrases(sendResponse);
+            return true; // Keep the message channel open for async response
     }
     if (message.command === 'start') {
         startPomodoro();
@@ -232,3 +235,10 @@ storeMessagesSequentially([
     "Esta es una frase personalizada 4.",
     "Hola"
 ]);
+
+function sendMotivationalPhrases(sendResponse) {
+    chrome.storage.local.get('customMessages', function(data) {
+        let customMessages = data.customMessages || [];
+        sendResponse({ phrases: customMessages });
+    });
+}

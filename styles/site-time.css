@@ -1,9 +1,11 @@
-/* site-time.css */
 body {
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
+    font-family: Arial, sans-serif;
     text-align: center;
+    padding: 20px;
+    width: 400px; /* Ajusta el ancho aquí */
+    height: 300px; /* Ajusta la altura aquí */
 }
+
 
 table {
     width: 100%;

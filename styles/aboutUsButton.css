@@ -4,4 +4,5 @@
     left: 15px;
     width: 20px; /* Tamaño pequeño */
     height: 20px; /* Tamaño pequeño */
+    cursor: pointer; /* Agregamos un cursor de puntero */
 }

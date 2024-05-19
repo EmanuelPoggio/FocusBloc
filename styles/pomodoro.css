@@ -1,11 +1,12 @@
 /* popup.css */
 body {
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    width: 400px; /* Ajusta el ancho aquí */
+    height: 300px; /* Ajusta la altura aquí */
 }
+
 button {
     margin-top: 5px;
 }

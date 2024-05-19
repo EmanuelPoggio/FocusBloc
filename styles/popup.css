@@ -1,13 +1,49 @@
+
 /* popup.css */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
+    width: 400px; /* Ajusta el ancho aquí */
+    height: 300px; /* Ajusta la altura aquí */
 }
 
-#main-menu button {
-    margin-top: 10px;
-    padding: 10px 20px;
+#main-menu {
+    margin-bottom: 20px;
+}
+
+#url-form {
+    margin-bottom: 20px;
+}
+
+#url-input {
+    width: 70%;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+#add-url {
+    padding: 10px;
+}
+
+#motivational-message {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+#url-list-container {
+    margin-top: 20px;
+}
+
+#url-list li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px;
+    margin-left: 10px;
     cursor: pointer;
     background-color: #4CAF50;
     color: white;
@@ -15,6 +51,6 @@ body {
     border-radius: 5px;
 }
 
-#main-menu button:hover {
+button:hover {
     background-color: #45a049;
 }

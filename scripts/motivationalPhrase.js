@@ -6,7 +6,9 @@ chrome.storage.local.get('customMessages', function(data) {
         var randomIndex = Math.floor(Math.random() * messages.length);
         var randomMessage = messages[randomIndex];
         console.log('Frase aleatoria:', randomMessage);
-        document.getElementById('motivational-message').innerText = randomMessage;
+        var motivationalMessage = document.getElementById('motivational-message');
+        motivationalMessage.innerText = randomMessage;
+        motivationalMessage.style.display = 'block'; // Mostrar el mensaje
     } else {
         console.log('No hay mensajes disponibles.');
     }
