@@ -7,26 +7,56 @@
     <link rel="stylesheet" type="text/css" href="../styles/url.css">
 </head>
 <body>
-    <h1>Bienvenido a FocusBloc</h1>
+    <h1 id="h1">Bienvenido a FocusBloc</h1>
+    <h2 id="h2"> Presione en '+' para agregar una URL</h2>
 
-    <div id="main-menu">
-        <div id="url-form">
-            <input type="text" id="url-input" placeholder="Ingresa una URL">
-            <button id="add-url">Agregar URL</button>
-        </div>
+    <div id="agregarurl-button">
+        <button id="open-url-modal">+</button>
     </div>
 
     <div id="url-list-container">
         <ul id="url-list"></ul>
     </div>
+
+    <!-- Botones de paginación -->
+    <div id="pagination-controls">
+        <button id="prev-page">atras</button>
+        <button id="next-page">Siguiente</button>
+    </div>
+
+
+
+    <!-- Botón Pomodoro -->
+    <div id="pomodoro-button-container">
+        <button id="pomodoro-button">Pomodoro</button>
+    </div>
+
+
+    <!-- Botón Site Timer -->
+    <div id="site-timer-button">
+        <button id="site-timer">Site Timer</button>
+    </div>
+    
     <div id="motivational-message"></div> 
 
-       <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="About Us">
+    <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="About Us">
+    
+
+    
+
+    <!-- Pop-up modal agregar url -->
+    <div id="url-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <input type="text" id="url-input" placeholder="Ingresa una URL">
+            <button id="add-url">Agregar URL</button>
+        </div>
+    </div>
 
     <script src="../scripts/motivationalPhrase.js"></script>
     <script src="../scripts/popup.js"></script>
     <script src="../scripts/aboutUsButton.js"></script>
     <script src="../scripts/addUrl.js"></script>
+    <script src="../scripts/goToCronometer.js"></script>
 </body>
 </html>
-

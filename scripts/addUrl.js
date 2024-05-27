@@ -1,7 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Manejar agregar URL
-    document.getElementById('add-url').addEventListener('click', function() {
-        let urlInput = document.getElementById('url-input');
+    let modal = document.getElementById('url-modal');
+    let btn = document.getElementById('open-url-modal');
+    let span = document.getElementsByClassName('close')[0];
+    let addUrlButton = document.getElementById('add-url');
+    let urlInput = document.getElementById('url-input');
+    let prevPageButton = document.getElementById('prev-page');
+    let nextPageButton = document.getElementById('next-page');
+
+    let currentPage = 0;
+    const itemsPerPage = 3;
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    addUrlButton.addEventListener('click', function() {
         let url = urlInput.value.trim();
 
         if (url) {
@@ -12,48 +35,85 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('URL almacenada:', url);
                     updateUrlList();
                     urlInput.value = ''; // Limpiar el input
+                    modal.style.display = "none"; // Cerrar el modal
                 });
             });
         }
     });
 
-    // Función para actualizar la visualización de la lista
     function updateUrlList() {
         chrome.storage.local.get('urlList', function(data) {
             let urlList = data.urlList || [];
             let urlListContainer = document.getElementById('url-list');
             urlListContainer.innerHTML = '';
 
-            urlList.forEach(function(url) {
+            let start = currentPage * itemsPerPage;
+            let end = start + itemsPerPage;
+            let paginatedUrls = urlList.slice(start, end);
+
+            paginatedUrls.forEach(function(url) {
                 let li = document.createElement('li');
                 li.textContent = url;
 
-                // Crear botón Pomodoro
-                let pomodoroButton = document.createElement('button');
-                pomodoroButton.textContent = 'Pomodoro';
-                pomodoroButton.className = 'pomodoro-btn';
-                pomodoroButton.addEventListener('click', function() {
-                    window.location.href = '../pages/pomodoro.html';
-                });
+                // Creacion de botones para la lista
 
-                // Crear botón Site Timer
-                let siteTimerButton = document.createElement('button');
-                siteTimerButton.textContent = 'Site Timer';
-                siteTimerButton.className = 'site-timer-btn';
-                siteTimerButton.addEventListener('click', function() {
-                    window.location.href = '../pages/site-time.html';
-                });
+                let buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
 
-                // Agregar botones al elemento de la lista
-                li.appendChild(pomodoroButton);
-                li.appendChild(siteTimerButton);
+                let btn1 = document.createElement('button');
+                btn1.textContent = 'Btn1';
+                btn1.classList.add('small-button');
+                btn1.id = 'btn1';
 
-                // Agregar elemento de la lista al contenedor
+
+                let btn2 = document.createElement('button');
+                btn2.textContent = 'Btn2';
+                btn2.classList.add('small-button');
+
+                let btn3 = document.createElement('button');
+                btn3.textContent = 'X';
+                btn3.classList.add('small-button');
+
+                buttonContainer.appendChild(btn1);
+                buttonContainer.appendChild(btn2);
+                buttonContainer.appendChild(btn3);
+                li.appendChild(buttonContainer);
+
                 urlListContainer.appendChild(li);
             });
+
+            updatePaginationButtons(urlList.length);
         });
     }
 
-    // Inicializar la lista de URLs al cargar la página
+    function updatePaginationButtons(totalItems) {
+        let totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        prevPageButton.disabled = currentPage === 0;
+        nextPageButton.disabled = currentPage >= totalPages - 1;
+    }
+
+    prevPageButton.addEventListener('click', function() {
+        if (currentPage > 0) {
+            currentPage--;
+            updateUrlList();
+        }
+    });
+
+    nextPageButton.addEventListener('click', function() {
+        chrome.storage.local.get('urlList', function(data) {
+            let urlList = data.urlList || [];
+            let totalPages = Math.ceil(urlList.length / itemsPerPage);
+
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updateUrlList();
+            }
+        });
+    });
+
     updateUrlList();
+
+
+
 });
