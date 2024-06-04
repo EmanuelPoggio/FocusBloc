@@ -1,12 +1,136 @@
-/* popup.css */
+/* pomodoro.css */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
-    width: 400px; /* Ajusta el ancho aquí */
-    height: 300px; /* Ajusta la altura aquí */
+    width: 500px; /* Ajusta el ancho aquí */
+    height: 400px; /* Ajusta la altura aquí */
+    position: relative;
+
+    /* Imagen de fondo */
+    background-image: url('../images/icons/fondo.jpg'); /* Ruta de la imagen */
+    background-size: 48%; /* Ajusta el tamaño de la imagen al 50% del contenedor */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center;
+    opacity: 0.8;
 }
 
+/* Contenedor principal centrado verticalmente */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - 60px); /* Ajustar el tamaño para dejar espacio a los botones */
+}
+
+/* Contenedor flexible para los labels y selectores */
+.flex-container {
+    display: flex;
+    justify-content: center;
+    gap: 120px; /* Espacio entre los items horizontalmente */
+    margin-bottom: 20px; /* Añadir espacio debajo del contenedor flexible */
+}
+
+/* Estilo para los items dentro del contenedor flexible */
+.flex-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Reducir el espacio entre el label y el select */
+    margin-top: 150px;
+    border-radius: 10px;
+    opacity: 0.9;
+    margin-left: 28px; /* Ajusta este valor para mover los elementos a la derecha */
+    margin-bottom: 40px;
+    font-size: 19px;
+    color: #000;
+    display: inline-block;
+    border-radius: 11px;
+    border: 2px solid;
+    background: #c1e1fc;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Estilo para el display del temporizador */
+#timer-display {
+    font-size: 19px;
+    color: #000;
+    display: inline-block;
+    border-radius: 19px;
+    border: 1px solid;
+    background: rgba(178, 231, 255, 0.8);
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Estilo para las etiquetas y selectores */
+label {
+    font-size: 14px;
+    margin: 0; /* Eliminar margen vertical */
+    display: block;
+}
+
+select {
+    font-size: 14px;
+    padding: 5px;
+    margin-top: 5px; /* Reducir el margen superior del select */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Contenedor para los botones, posicionado en la parte inferior */
+.button-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center; /* Centra los botones horizontalmente */
+}
+
+/* Estilo para los botones */
 button {
-    margin-top: 5px;
+    font-size: 14px;
+    padding: 10px 20px;
+    margin: 10px 5px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #1976D2;
+}
+
+/* Estilo específico para el botón de pausa */
+#pause-btn {
+    background-color: #FF6347;
+}
+
+#pause-btn:hover {
+    background-color: #FF4500;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    padding: 5px 10px;
+    margin: 0;
+    border-radius: 5px; 
+}
+
+.close-btn:hover {
+    background-color: #60a7e9; /* Cambia el color cuando se pasa el cursor por encima */
 }

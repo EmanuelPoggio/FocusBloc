@@ -2,15 +2,15 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
-    width: 500px; /* Ajusta el ancho aquí */
-    height: 400px; /* Ajusta la altura aquí */
+    width: 500px; 
+    height: 400px;
     position: relative;
 
     /* Imagen de fondo */
-    background-image: url('../images/icons/fondo.jpg'); /* Ruta de la imagen */
-    background-size: 50%; /* Ajusta el tamaño de la imagen al 50% del contenedor */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-position: center; /* Centra la imagen en el fondo */
+    background-image: url('../images/icons/fondo.jpg'); 
+    background-size: 50%; 
+    background-repeat: no-repeat; 
+    background-position: center; 
 }
 
 #agregarurl-button {
@@ -34,10 +34,11 @@ body {
     background-color: #a7f9ff;
 }
 
+/* Botón Site Timer */
 #site-timer-button {
-    margin: 5px 0; /* Reducir el margen para mover hacia arriba */
+    margin: 5px 0;
     margin-right: -380px;
-    margin-bottom: 5px; /* Ajuste para mover el botón Site Timer más cerca del botón Pomodoro */
+    margin-bottom: 5px;
 }
 
 #site-timer {
@@ -56,9 +57,9 @@ body {
 
 /* Botón Pomodoro */
 #pomodoro-button-container {
-    margin: 5px 0; /* Reducir el margen para mover hacia arriba */
+    margin: 5px 0; 
     margin-right: -380px;
-    margin-top: -10px; /* Ajuste para mover el botón Pomodoro más cerca del botón Site Timer */
+    margin-top: -10px;
 }
 
 #pomodoro-button {
@@ -119,19 +120,19 @@ body {
 #url-list li {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Alinea verticalmente los botones */
+    align-items: center; 
     margin-bottom: 19px;
     border-radius: 19px;
     border: 2px solid;
     background: rgba(255, 255, 255, 0.8);
     font-weight: bold;
-    padding: 10px; /* Añadir relleno para que los botones no sobresalgan */
+    padding: 10px;
 }
 
-/* Contenedor para los botones pequeños */
+/* Contenedor para los botones */
 .button-container {
     display: flex;
-    gap: 5px; /* Espacio entre los botones */
+    gap: 5px;
 }
 
 /* Botones pequeños */
@@ -192,4 +193,26 @@ button:hover {
 
 #pagination-controls button:hover {
     background-color: #1976D2;
+}
+
+#message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px; 
+    margin-bottom: 10px; 
+}
+
+
+/*Estilo de mensaje cuando no hay url*/
+#noUrlMessage {
+    font-size: 19px;
+    color: #000;
+    display: inline-block;
+    border-radius: 19px;
+    border: 1px solid;
+    background: #c1e1fc;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
 }

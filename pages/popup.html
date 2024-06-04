@@ -8,41 +8,46 @@
 </head>
 <body>
     <h1 id="h1">Bienvenido a FocusBloc</h1>
-    <h2 id="h2"> Presione en '+' para agregar una URL</h2>
+    <h2 id="h2">Presione en '+' para agregar una URL</h2>
 
+    <!-- Boton +-->
     <div id="agregarurl-button">
         <button id="open-url-modal">+</button>
     </div>
 
+    <!-- Div de lista donde se almacenan las URL-->
     <div id="url-list-container">
+        <div id="message-container">
+            <div id="noUrlMessage">Ups, no tienes enlaces agregados :/</div>
+        </div>
         <ul id="url-list"></ul>
     </div>
 
     <!-- Botones de paginación -->
     <div id="pagination-controls">
-        <button id="prev-page">atras</button>
+        <button id="prev-page">Atras</button>
         <button id="next-page">Siguiente</button>
     </div>
-
-
 
     <!-- Botón Pomodoro -->
     <div id="pomodoro-button-container">
         <button id="pomodoro-button">Pomodoro</button>
     </div>
 
-
     <!-- Botón Site Timer -->
     <div id="site-timer-button">
         <button id="site-timer">Site Timer</button>
     </div>
     
+
+    <!-- Frase motivadora-->
     <div id="motivational-message"></div> 
 
-    <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="About Us">
-    
 
-    
+    <!-- About Us-->
+    <img id="about-us-image" src="../images/icons/aboutUsButton.png" alt="About Us">
+
+
 
     <!-- Pop-up modal agregar url -->
     <div id="url-modal" class="modal">
@@ -50,6 +55,7 @@
             <span class="close">&times;</span>
             <input type="text" id="url-input" placeholder="Ingresa una URL">
             <button id="add-url">Agregar URL</button>
+            <p>Ingresa una URL valida. Ej: "https://www.youtube.com/"</p>
         </div>
     </div>
 
@@ -58,5 +64,8 @@
     <script src="../scripts/aboutUsButton.js"></script>
     <script src="../scripts/addUrl.js"></script>
     <script src="../scripts/goToCronometer.js"></script>
+    <script src="../scripts/deleteUrl.js"></script>
+    <script src="../scripts/urlManager.js"></script>
+    <script src="../scripts/getUrlIcon.js"></script>
 </body>
 </html>

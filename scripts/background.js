@@ -91,9 +91,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         case 'init':
             sendInitialState();
             break;
-        case 'getMotivationalPhrases':
-            sendMotivationalPhrases(sendResponse);
-            return true; // Keep the message channel open for async response
     }
     if (message.command === 'start') {
         startPomodoro();
@@ -236,9 +233,20 @@ storeMessagesSequentially([
     "Hola"
 ]);
 
-function sendMotivationalPhrases(sendResponse) {
-    chrome.storage.local.get('customMessages', function(data) {
-        let customMessages = data.customMessages || [];
-        sendResponse({ phrases: customMessages });
+// Almacenamiento de URLS
+function addUrl(url, sendResponse) {
+    chrome.storage.local.get('urlList', function(data) {
+        let urlList = data.urlList || [];
+        urlList.push(url);
+        chrome.storage.local.set({ urlList: urlList }, function() {
+            console.log('URL almacenada:', url);
+            sendResponse({ success: true, urlList: urlList });
+        });
+    });
+}
+
+function getUrlList(sendResponse) {
+    chrome.storage.local.get('urlList', function(data) {
+        sendResponse({ urlList: data.urlList || [] });
     });
 }

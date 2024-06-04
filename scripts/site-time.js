@@ -26,3 +26,17 @@ function convertMsToHoursMinutes(milliseconds) {
     minutes = minutes % 60;
     return `${hours}h ${minutes}m ${seconds}s`;
 }
+
+//Logica de botón hacia atras
+const backButton = document.getElementById('back-button');
+    backButton.addEventListener('click', function() {
+        window.location.href = "../pages/popup.html"; // Cambia 'index.html' por la ruta de tu página principal
+    });
+
+    //Logica del botón reset
+    const resetButton = document.getElementById('reset-button');
+resetButton.addEventListener('click', function() {
+    chrome.storage.local.set({ 'totalTimePerSite': {} }, function() {
+        populateSiteList({});
+    });
+});

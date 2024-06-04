@@ -5,31 +5,42 @@
     <link rel="stylesheet" type="text/css" href="../styles/pomodoro.css">
 </head>
 <body>
+    <button class="close-btn" id="close-btn-id">&times;</button>
     <audio id="alarm-audio" src="./sounds/alarm-sound.mp3" preload="auto"></audio>
-    <div id="timer-display">60:00</div>
-    <label for="work-time">Tiempo de trabajo:</label>
-    <select id="work-time">
-        <option value="1">1 min</option>
-        <option value="10">10 min</option>
-        <option value="20">20 min</option>
-        <option value="30" selected>30 min</option>
-        <option value="40">40 min</option>
-        <option value="50">50 min</option>
-        <option value="60">60 min</option>
-    </select>
-    <label for="break-time">Tiempo de descanso:</label>
-    <select id="break-time">
-        <option value="1">1 min</option>
-        <option value="10">10 min</option>
-        <option value="20">20 min</option>
-        <option value="30" selected>30 min</option>
-        <option value="40">40 min</option>
-        <option value="50">50 min</option>
-        <option value="60">60 min</option>
-    </select>
-    <button id="start-btn">Start</button>
-    <button id="pause-btn">Pause</button>
-    <button id="reset-btn">Reset</button>
+    <div class="container">
+        <div id="timer-display">Trabajo: 30:00</div>
+        <div class="flex-container">
+            <div class="flex-item">
+                <label for="work-time">Tiempo de trabajo:</label>
+                <select id="work-time">
+                    <option value="1">1 min</option>
+                    <option value="10">10 min</option>
+                    <option value="20">20 min</option>
+                    <option value="30" selected>30 min</option>
+                    <option value="40">40 min</option>
+                    <option value="50">50 min</option>
+                    <option value="60">60 min</option>
+                </select>
+            </div>
+            <div class="flex-item">
+                <label for="break-time">Tiempo de descanso:</label>
+                <select id="break-time">
+                    <option value="1">1 min</option>
+                    <option value="10">10 min</option>
+                    <option value="20">20 min</option>
+                    <option value="30" selected>30 min</option>
+                    <option value="40">40 min</option>
+                    <option value="50">50 min</option>
+                    <option value="60">60 min</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="button-container">
+        <button id="start-btn">Start</button>
+        <button id="pause-btn">Pause</button>
+        <button id="reset-btn">Reset</button>
+    </div>
     <script src="../scripts/pomodoro.js"></script>
 </body>
 </html>

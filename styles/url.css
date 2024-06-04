@@ -4,3 +4,22 @@
     padding: 10px; 
     margin-bottom: 10px; 
 }
+
+/*iconos de sitios web*/
+.favicon {
+    width: 21px;
+    height: 21px;
+    margin-right: 8px;
+}
+
+
+
+/*Botones de gestion en las url*/
+
+.button-icon {
+    width: 16px; 
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 5px;
+    background: none;
+}
