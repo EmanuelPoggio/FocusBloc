@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /* Validación de URL correcta */
     function isValidUrl(url) {
         const pattern = /^https:\/\/[^\s/$.?#].[^\s]*$/;
         return pattern.test(url);
@@ -40,12 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 chrome.storage.local.set({ urlList: urlList }, function() {
                     console.log('URL almacenada:', url);
                     updateUrlList();
-                    urlInput.value = ''; // Limpiar el input
-                    modal.style.display = "none"; // Cerrar el modal
+                    urlInput.value = '';
+                    modal.style.display = "none";
                 });
             });
         } else {
-            alert('Por favor, ingrese una URL valida');
+            alert('Por favor, ingrese una URL válida');
         }
     });
 
@@ -66,29 +67,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 paginatedUrls.forEach(function(url, index) {
                     let li = document.createElement('li');
 
-                    // Create favicon image element
+                    // Creación de icono + llamada a la función en getUrlIcon.js
                     let favicon = document.createElement('img');
-                    favicon.src = getUrlIcon(url); // Usar la función getUrlIcon del archivo getUrlIcon.js
+                    favicon.src = getUrlIcon(url);
                     favicon.classList.add('favicon');
                     li.appendChild(favicon);
 
-                    // Create URL text
-                    let urlText = document.createElement('span');
-                    urlText.textContent = url;
-                    li.appendChild(urlText);
+                    // Creación de hipervínculo para la URL
+                    let urlLink = document.createElement('a');
+                    urlLink.href = url;
+                    urlLink.textContent = url;
+                    urlLink.target = '_blank'; // Abrir en una nueva pestaña
+                    urlLink.classList.add('url-link'); // Añadir clase para aplicar estilo
+                    li.appendChild(urlLink);
+                    
 
-                    // Creacion de botones para la lista
+                    // Creación de botones para la lista
                     let buttonContainer = document.createElement('div');
                     buttonContainer.classList.add('button-container');
 
+                    // Botón de cronómetro
                     let btn1 = document.createElement('button');
                     let btn1Icon = document.createElement('img');
                     btn1Icon.src = '../images/icons/Cronometer.png'; 
                     btn1Icon.classList.add('button-icon');
                     btn1.appendChild(btn1Icon);
                     btn1.classList.add('small-button');
-                    btn1.id = 'cronometro-button'; // Asegurarse de asignar el ID correcto
+                    btn1.id = 'cronometro-button';
 
+                    // Botón de bloqueo
                     let btn2 = document.createElement('button');
                     let btn2Icon = document.createElement('img');
                     btn2Icon.src = '../images/icons/Block.png';
@@ -96,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     btn2.appendChild(btn2Icon);
                     btn2.classList.add('small-button');
 
+                    // Botón para eliminar URL
                     let btn3 = document.createElement('button');
                     btn3.textContent = 'X';
                     btn3.classList.add('small-button');
@@ -117,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    //Paginacion dentro de la lista
+    // Paginación dentro de la lista
     function updatePaginationButtons(totalItems) {
         let totalPages = Math.ceil(totalItems / itemsPerPage);
 

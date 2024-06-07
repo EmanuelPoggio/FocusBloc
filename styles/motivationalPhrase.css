@@ -1,8 +1,11 @@
 #motivational-message {
   position: fixed;
   bottom: 10px;
-  right: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 1.2em;
   color: #333; /* Color de las frases */
   font-weight: bold;
+  text-align: center;
+  width: 100%;
 }

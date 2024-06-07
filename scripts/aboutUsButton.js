@@ -1,17 +1,181 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
+    let modal = document.getElementById('url-modal');
+    let btn = document.getElementById('open-url-modal');
+    let span = document.getElementsByClassName('close')[0];
+    let addUrlButton = document.getElementById('add-url');
+    let urlInput = document.getElementById('url-input');
+    let prevPageButton = document.getElementById('prev-page');
+    let nextPageButton = document.getElementById('next-page');
+    let messageContainer = document.getElementById('message-container'); // Contenedor para el mensaje
+    let paginationControls = document.getElementById('pagination-controls'); // Controles de paginación
 
-    var aboutUsImage = document.getElementById("about-us-image");
+    let currentPage = 0;
+    const itemsPerPage = 3;
 
-    aboutUsImage.style.cursor = "pointer";
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
 
-    aboutUsImage.addEventListener("mouseenter", function() {
-        aboutUsImage.style.background = "rgba(0, 0, 0, 0.1)";
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    /* Validación de URL correcta */
+    function isValidUrl(url) {
+        const pattern = /^https:\/\/[^\s/$.?#].[^\s]*$/;
+        return pattern.test(url);
+    }
+
+    /* Extraer el dominio de una URL */
+    function getDomain(url) {
+        let domain;
+        try {
+            domain = new URL(url).hostname.replace('www.', '');
+        } catch (e) {
+            domain = null;
+        }
+        return domain;
+    }
+
+    /* Comprobar si la url existe en la lista */
+    function isDuplicateDomain(urlList, newUrl) {
+        let newDomain = getDomain(newUrl);
+        return urlList.some(url => getDomain(url) === newDomain);
+    }
+
+    addUrlButton.addEventListener('click', function() {
+        let url = urlInput.value.trim();
+
+        if (url && isValidUrl(url)) {
+            chrome.storage.local.get('urlList', function(data) {
+                let urlList = data.urlList || [];
+                if (isDuplicateDomain(urlList, url)) {
+                    alert('La URL ingresada ya existe en la lista');
+                } else {
+                    urlList.push(url);
+                    chrome.storage.local.set({ urlList: urlList }, function() {
+                        console.log('URL almacenada:', url);
+                        updateUrlList();
+                        urlInput.value = '';
+                        modal.style.display = "none";
+                    });
+                }
+            });
+        } else {
+            alert('Por favor, ingrese una URL válida');
+        }
     });
-    
-    aboutUsImage.addEventListener("mouseleave", function() {
-        aboutUsImage.style.background = "transparent";
+
+    function updateUrlList() {
+        chrome.storage.local.get('urlList', function(data) {
+            let urlList = data.urlList || [];
+            let urlListContainer = document.getElementById('url-list');
+            urlListContainer.innerHTML = '';
+
+            if (urlList.length === 0) {
+                messageContainer.style.display = 'block';
+                paginationControls.style.display = 'none';
+            } else {
+                messageContainer.style.display = 'none';
+                paginationControls.style.display = 'flex';
+                let start = currentPage * itemsPerPage;
+                let end = start + itemsPerPage;
+                let paginatedUrls = urlList.slice(start, end);
+
+                paginatedUrls.forEach(function(url, index) {
+                    let li = document.createElement('li');
+
+                    // Creación de icono + llamada a la función en getUrlIcon.js
+                    let favicon = document.createElement('img');
+                    favicon.src = getUrlIcon(url);
+                    favicon.classList.add('favicon');
+                    li.appendChild(favicon);
+
+                    // Creación de hipervínculo para la URL
+                    let urlLink = document.createElement('a');
+                    urlLink.href = url;
+                    urlLink.textContent = url;
+                    urlLink.target = '_blank';
+                    urlLink.classList.add('url-link');
+                    li.appendChild(urlLink);
+
+                    // Creación de botones para la lista
+                    let buttonContainer = document.createElement('div');
+                    buttonContainer.classList.add('button-container');
+
+                    // Botón de cronómetro
+                    let btn1 = document.createElement('button');
+                    let btn1Icon = document.createElement('img');
+                    btn1Icon.src = '../images/icons/Cronometer.png'; 
+                    btn1Icon.classList.add('button-icon');
+                    btn1.appendChild(btn1Icon);
+                    btn1.classList.add('small-button');
+                    btn1.id = 'cronometro-button';
+
+                    // Botón de bloqueo
+                    let btn2 = document.createElement('button');
+                    let btn2Icon = document.createElement('img');
+                    btn2Icon.src = '../images/icons/Block.png';
+                    btn2Icon.classList.add('button-icon');
+                    btn2.appendChild(btn2Icon);
+                    btn2.classList.add('small-button');
+
+                    // Botón para eliminar URL
+                    let btn3 = document.createElement('button');
+                    btn3.textContent = 'X';
+                    btn3.classList.add('small-button');
+                    btn3.addEventListener('click', function() {
+                        let indexToRemove = start + index;
+                        deleteUrl(indexToRemove, updateUrlList);
+                    });
+
+                    buttonContainer.appendChild(btn1);
+                    buttonContainer.appendChild(btn2);
+                    buttonContainer.appendChild(btn3);
+                    li.appendChild(buttonContainer);
+
+                    urlListContainer.appendChild(li);
+                });
+
+                updatePaginationButtons(urlList.length);
+            }
+        });
+    }
+
+    // Paginación dentro de la lista
+    function updatePaginationButtons(totalItems) {
+        let totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        prevPageButton.disabled = currentPage === 0;
+        nextPageButton.disabled = currentPage >= totalPages - 1;
+    }
+
+    prevPageButton.addEventListener('click', function() {
+        if (currentPage > 0) {
+            currentPage--;
+            updateUrlList();
+        }
     });
-    aboutUsImage.addEventListener("click", function() {
-        chrome.tabs.create({ url: "https://economic-fibre-af0.notion.site/About-Us-05cc7cb3c7c5470593ed4f33cc98713b?pvs=4"});
+
+    nextPageButton.addEventListener('click', function() {
+        chrome.storage.local.get('urlList', function(data) {
+            let urlList = data.urlList || [];
+            let totalPages = Math.ceil(urlList.length / itemsPerPage);
+
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updateUrlList();
+            }
+        });
     });
+
+    updateUrlList();
+
+
 });
