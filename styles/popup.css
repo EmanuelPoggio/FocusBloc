@@ -142,36 +142,57 @@ body {
     gap: 5px;
 }
 
-/* Botones pequeños */
+/* Botones de cronometro, bloqueo y eliminar */
 .small-button {
     padding: 5px;
     font-size: 10px;
-    background-color: #96c4f8;
-    color: white;
+    background: none; 
+    color: black; 
     border: none;
-    border-radius: 5px;
     cursor: pointer;
 }
 
 .small-button:hover {
-    background-color: #6ac5f0;
+    text-decoration: underline; /* Subrayar el texto al pasar el ratón por encima */
 }
 
+
+.btn1 {
+    font-size: 15px;
+}
+
+.btn2 {
+
+    font-size: 15px; 
+}
+
+.btn3 {
+    font-size: 18px; 
+}
+
+.btn1:hover,.btn2:hover,.btn3:hover{
+    background-color: #c5e2ff; ;
+}
+
+/*boton de agregar url*/
 button {
-    padding: 10px;
+    padding: 8px;
     margin-left: 10px;
     cursor: pointer;
-    background-color: #96c4f8;
-    color: white;
+    background-color: #2196F3;
+    color: rgb(255, 255, 255);
     border: none;
     border-radius: 10px;
-    border: 0.7px solid;
-    border-color: rgb(121, 121, 121);
+    border: 0.5px solid;
+    border-color: rgb(29, 29, 29);
+
 }
 
-button:hover {
-    background-color: #6ac5f0;
+button:hover{
+    background-color: #1976D2;
+
 }
+
 
 /* Estilo para el título h2 */
 #h2 {
@@ -180,7 +201,7 @@ button:hover {
     margin-left: -150px; 
 }
 
-/* Estilos para los botones de paginación */
+/* Estilos para los botones de paginación 
 #pagination-controls {
     display: none; 
     justify-content: center;
@@ -213,7 +234,7 @@ button:hover {
 #pagination-controls button:focus {
     outline: none;
 }
-
+*/
 /*Estilo de mensaje cuando no hay url*/
 #noUrlMessage {
     font-size: 17px;

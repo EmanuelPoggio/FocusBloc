@@ -88,25 +88,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Botón de cronómetro
                     let btn1 = document.createElement('button');
-                    let btn1Icon = document.createElement('img');
-                    btn1Icon.src = '../images/icons/Cronometer.png'; 
-                    btn1Icon.classList.add('button-icon');
-                    btn1.appendChild(btn1Icon);
-                    btn1.classList.add('small-button');
+                    btn1.innerHTML = '&#x23F1;'; 
+                    btn1.classList.add('small-button', 'btn1'); // Añadir clase específica
                     btn1.id = 'cronometro-button';
 
                     // Botón de bloqueo
+                    //Candado bloqueado:&#128274;
+                    //Candado abierto:&#128275;
+                    //Candado con llave:&#x1F510;
                     let btn2 = document.createElement('button');
-                    let btn2Icon = document.createElement('img');
-                    btn2Icon.src = '../images/icons/Block.png';
-                    btn2Icon.classList.add('button-icon');
-                    btn2.appendChild(btn2Icon);
-                    btn2.classList.add('small-button');
+                    btn2.innerHTML = '&#128275;'; 
+                    btn2.classList.add('small-button', 'btn2'); // Añadir clase específica
 
                     // Botón para eliminar URL
                     let btn3 = document.createElement('button');
-                    btn3.textContent = 'X';
-                    btn3.classList.add('small-button');
+                    btn3.innerHTML = '&times;'; 
+                    btn3.classList.add('small-button', 'btn3'); // Añadir clase específica
                     btn3.addEventListener('click', function() {
                         let indexToRemove = start + index;
                         deleteUrl(indexToRemove, updateUrlList);
@@ -125,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Paginación dentro de la lista
+    /*Paginación dentro de la lista
     function updatePaginationButtons(totalItems) {
         let totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -151,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+*/
     updateUrlList();
 
     // Añade un event listener para el botón del cronómetro
