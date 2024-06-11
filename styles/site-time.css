@@ -1,16 +1,16 @@
+/* site-time.css */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
     padding: 20px;
-    width: 550px;
-    height: 450px;
+    width: 550px; 
+    height: 450px; 
     margin: auto;
-    background-image: url('../images/icons/fondo.jpg');
-    background-size: 50%;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url('../images/icons/fondo.jpg'); 
+    background-size: 50%; 
+    background-repeat: no-repeat; 
+    background-position: center; 
     box-sizing: border-box;
-    position: relative; 
 }
 
 h1 {
@@ -21,17 +21,18 @@ h1 {
 
 #site-list {
     height: 270px;
-    overflow: auto;
-    border: 1px solid #8b8b8b;
-    padding: 10px;
-    border-radius: 10px;
+    overflow: auto; 
+    border: 1px solid #8b8b8b; 
+    padding: 10px; 
+    border-radius: 10px; 
     margin-top: 20px;
+    
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 10px; 
 }
 
 th, td {
@@ -39,16 +40,18 @@ th, td {
     padding: 8px;
     text-align: left;
     font-size: 14px;
+  
+
 }
 
 th {
     background-color: #94c9fc;
-    font-weight: bold;
+    font-weight: bold; 
 }
 
 tbody tr {
-    background-color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* Color celeste transparente */
+    margin-bottom: 10px; /* Espacio entre filas */
 }
 
 tbody tr:nth-child(even) {
@@ -57,36 +60,10 @@ tbody tr:nth-child(even) {
 
 #button-container {
     margin-top: 10px;
-    position: relative;
 }
 
-#back-button {
-    position: absolute;
-    top: 3;
-    right: 0;
+#back-button, #reset-button {
     background-color: #00b6ee;
-    border: none;
-    color: rgb(255, 255, 255);
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: -48px;
-    padding: 5px 10px;
-
-}
-
-#back-button:hover {
-    background-color: #029ece;
-}
-
-#reset-button {
-    background-color: #FF6347;
     border: none;
     color: rgb(255, 255, 255);
     padding: 10px 20px;
@@ -99,6 +76,20 @@ tbody tr:nth-child(even) {
     border-radius: 5px;
 }
 
+#back-button:hover {
+   
+    background-color: #029ece;
+}
+
+
+
+#reset-button {
+    background-color: #FF6347; 
+}
+
+
+
+
 #reset-button:hover {
-    background-color: #FF4500;
+    background-color: #FF4500; 
 }
