@@ -114,23 +114,21 @@ btn2.addEventListener('click', function() {
     chrome.storage.local.set({ 'btn2Active': isActive });
 });
 
-                    
+    // Botón para eliminar URL
+    let btn3 = document.createElement('button');
+    btn3.innerHTML = '&times;';
+    btn3.classList.add('small-button', 'btn3'); // Añadir clase específica
+    btn3.addEventListener('click', function() {
+        let indexToRemove = start + index;
+        deleteUrl(indexToRemove, updateUrlList);
+    });
 
-                    // Botón para eliminar URL
-                    let btn3 = document.createElement('button');
-                    btn3.innerHTML = '&times;';
-                    btn3.classList.add('small-button', 'btn3'); // Añadir clase específica
-                    btn3.addEventListener('click', function() {
-                        let indexToRemove = start + index;
-                        deleteUrl(indexToRemove, updateUrlList);
-                    });
+    buttonContainer.appendChild(btn1);
+    buttonContainer.appendChild(btn2);
+    buttonContainer.appendChild(btn3);
+    li.appendChild(buttonContainer);
 
-                    buttonContainer.appendChild(btn1);
-                    buttonContainer.appendChild(btn2);
-                    buttonContainer.appendChild(btn3);
-                    li.appendChild(buttonContainer);
-
-                    urlListContainer.appendChild(li);
+    urlListContainer.appendChild(li);
                 });
             }
         });
@@ -139,11 +137,7 @@ btn2.addEventListener('click', function() {
     updateUrlList();
 
     // Añade un event listener para el botón del cronómetro
-    document.addEventListener('click', function(event) {
-        if (event.target && event.target.closest('#cronometro-button')) {
-            window.location.href = "../pages/Cronometro.html";
-        }
-    });
+
 });
 chrome.runtime.sendMessage({command: 'get-blocked-urls'}, function(response) {
     updateUrlList(response.urlList);
