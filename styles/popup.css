@@ -172,6 +172,9 @@ body {
 
     font-size: 15px; 
 }
+.btn2.active {
+    background-color: #f00; /* Color de fondo al presionar */
+}
 
 .btn3 {
     font-size: 18px; 

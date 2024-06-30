@@ -257,3 +257,39 @@ function getUrlList(sendResponse) {
         sendResponse({ urlList: data.urlList || [] });
     });
 }
+
+
+function getBlockedUrls(callback) {
+    chrome.storage.local.get('urlList', function(data) {
+        let urlList = data.urlList || [];
+        callback(urlList);
+    });
+}
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (changeInfo.url) {
+        getBlockedUrls(function(blockedUrls) {
+            blockedUrls.forEach(blockedUrl => {
+                if (changeInfo.url.includes(blockedUrl)) {
+                    chrome.tabs.remove(tabId);
+                }
+            });
+        });
+    }
+});
+
+function closeTabsWithBlockedUrl(url) {
+    chrome.tabs.query({}, function(tabs) {
+        tabs.forEach(tab => {
+            if (tab.url.includes(url)) {
+                chrome.tabs.remove(tab.id);
+            }
+        });
+    });
+}
+
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    if (message.command === 'block-url') {
+        toggleUrlBlock(message.url);
+        closeTabsWithBlockedUrl(message.url); // Llama a la función para cerrar pestañas con la URL bloqueada
+    }
+});

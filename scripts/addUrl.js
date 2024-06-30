@@ -93,9 +93,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Candado bloqueado: &#128274;
                     // Candado abierto: &#128275;
                     // Candado con llave: &#x1F510;
+                    
                     let btn2 = document.createElement('button');
-                    btn2.innerHTML = '&#128275;';
-                    btn2.classList.add('small-button', 'btn2'); // Añadir clase específica
+btn2.innerHTML = '&#128275;';
+btn2.classList.add('small-button', 'btn2'); // Añadir clase específica
+
+// Verificar si hay un estado almacenado y aplicarlo al botón
+chrome.storage.local.get('btn2Active', function(data) {
+    if (data.btn2Active) {
+        btn2.classList.add('active');
+    }
+});
+
+btn2.addEventListener('click', function() {
+    // Toggle (activar/desactivar) la clase 'active' en el botón
+    this.classList.toggle('active');
+
+    // Guardar el estado en el almacenamiento local
+    let isActive = this.classList.contains('active');
+    chrome.storage.local.set({ 'btn2Active': isActive });
+});
+
+                    
 
                     // Botón para eliminar URL
                     let btn3 = document.createElement('button');
@@ -126,3 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+chrome.runtime.sendMessage({command: 'get-blocked-urls'}, function(response) {
+    updateUrlList(response.urlList);
+});
+
