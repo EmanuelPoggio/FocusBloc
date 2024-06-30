@@ -226,11 +226,18 @@ function storeMessagesSequentially(messages) {
 
 // Agregar nuevas frases secuencialmente
 storeMessagesSequentially([
-    "Esta es una frase personalizada 1.",
-    "Esta es una frase personalizada 2.",
-    "Esta es una frase personalizada 3.",
-    "Esta es una frase personalizada 4.",
-    "Hola"
+ "El tiempo es lo más valioso que una persona puede gastar.",
+
+"La forma en que gastas tu tiempo es más importante que la cantidad de tiempo que tienes.– Alan Lakein",
+
+
+"El que pospone el momento adecuado para mejorar su vida, es como el granjero que espera el río para cruzar.– Horace",
+
+
+"El tiempo perdido nunca se encuentra de nuevo.– Benjamin Franklin",
+
+
+"La procrastinación es el ladrón del tiempo, año tras año lo dice, hasta que todas sus disculpas se agoten.– Charles Dickens",
 ]);
 
 // Almacenamiento de URLS

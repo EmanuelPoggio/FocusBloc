@@ -12,6 +12,6 @@ document.addEventListener("DOMContentLoaded", function() {
         aboutUsImage.style.background = "transparent";
     });
     aboutUsImage.addEventListener("click", function() {
-        chrome.tabs.create({ url: "https://economic-fibre-af0.notion.site/About-Us-05cc7cb3c7c5470593ed4f33cc98713b?pvs=4"});
+        chrome.tabs.create({ url: "https://emanuelpoggiodev.notion.site/About-Us-11df6d8fb4d5443297f20be9b506dae0?pvs=4"});
     });
 });

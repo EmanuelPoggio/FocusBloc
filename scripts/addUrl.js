@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let span = document.getElementsByClassName('close')[0];
     let addUrlButton = document.getElementById('add-url');
     let urlInput = document.getElementById('url-input');
-    let prevPageButton = document.getElementById('prev-page');
-    let nextPageButton = document.getElementById('next-page');
     let messageContainer = document.getElementById('message-container'); // Contenedor para el mensaje
 
     let currentPage = 0;
@@ -25,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /* Validación de URL correcta */
+    // Validación de URL correcta
     function isValidUrl(url) {
         const pattern = /^https:\/\/[^\s/$.?#].[^\s]*$/;
         return pattern.test(url);
@@ -80,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     urlLink.target = '_blank'; // Abrir en una nueva pestaña
                     urlLink.classList.add('url-link'); // Añadir clase para aplicar estilo
                     li.appendChild(urlLink);
-                    
 
                     // Creación de botones para la lista
                     let buttonContainer = document.createElement('div');
@@ -88,21 +85,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Botón de cronómetro
                     let btn1 = document.createElement('button');
-                    btn1.innerHTML = '&#x23F1;'; 
+                    btn1.innerHTML = '&#x23F1;';
                     btn1.classList.add('small-button', 'btn1'); // Añadir clase específica
                     btn1.id = 'cronometro-button';
 
                     // Botón de bloqueo
-                    //Candado bloqueado:&#128274;
-                    //Candado abierto:&#128275;
-                    //Candado con llave:&#x1F510;
+                    // Candado bloqueado: &#128274;
+                    // Candado abierto: &#128275;
+                    // Candado con llave: &#x1F510;
                     let btn2 = document.createElement('button');
-                    btn2.innerHTML = '&#128275;'; 
+                    btn2.innerHTML = '&#128275;';
                     btn2.classList.add('small-button', 'btn2'); // Añadir clase específica
 
                     // Botón para eliminar URL
                     let btn3 = document.createElement('button');
-                    btn3.innerHTML = '&times;'; 
+                    btn3.innerHTML = '&times;';
                     btn3.classList.add('small-button', 'btn3'); // Añadir clase específica
                     btn3.addEventListener('click', function() {
                         let indexToRemove = start + index;
@@ -116,39 +113,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     urlListContainer.appendChild(li);
                 });
-
-                updatePaginationButtons(urlList.length);
             }
         });
     }
 
-    /*Paginación dentro de la lista
-    function updatePaginationButtons(totalItems) {
-        let totalPages = Math.ceil(totalItems / itemsPerPage);
-
-        prevPageButton.disabled = currentPage === 0;
-        nextPageButton.disabled = currentPage >= totalPages - 1;
-    }
-
-    prevPageButton.addEventListener('click', function() {
-        if (currentPage > 0) {
-            currentPage--;
-            updateUrlList();
-        }
-    });
-
-    nextPageButton.addEventListener('click', function() {
-        chrome.storage.local.get('urlList', function(data) {
-            let urlList = data.urlList || [];
-            let totalPages = Math.ceil(urlList.length / itemsPerPage);
-
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                updateUrlList();
-            }
-        });
-    });
-*/
     updateUrlList();
 
     // Añade un event listener para el botón del cronómetro

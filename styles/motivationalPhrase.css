@@ -7,5 +7,8 @@
   color: #333; /* Color de las frases */
   font-weight: bold;
   text-align: center;
-  width: 100%;
+  max-width: 90%; /* Ajusta este valor según sea necesario */
+  white-space: normal; /* Permite que el texto se ajuste a múltiples líneas */
+  overflow: hidden; /* Esto oculta cualquier texto que se salga del contenedor */
+  word-wrap: break-word; /* Esto permite que las palabras largas se dividan y se ajusten */
 }
