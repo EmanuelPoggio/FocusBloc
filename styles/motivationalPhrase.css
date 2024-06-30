@@ -11,4 +11,5 @@
   white-space: normal; /* Permite que el texto se ajuste a múltiples líneas */
   overflow: hidden; /* Esto oculta cualquier texto que se salga del contenedor */
   word-wrap: break-word; /* Esto permite que las palabras largas se dividan y se ajusten */
+  font-family: 'Merriweather', sans; 
 }

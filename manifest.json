@@ -11,6 +11,7 @@
         "declarativeNetRequest.updateDynamicRules",
         "chrome.runtime.sendMessage",
         "notifications",
+        "chrome.notifications.create",
         "tts"
     ],
     "host_permissions": [

@@ -53,7 +53,7 @@ body {
 
 /* Botón Site Timer */
 #site-timer {
-    font-size: 8px;
+    font-size: 12px;
     padding: 10px 20px;
     background-color: #2196F3;
     color: white;
@@ -68,7 +68,7 @@ body {
 
 /* Botón Pomodoro */
 #pomodoro-button {
-    font-size: 8px;
+    font-size: 12px;
     padding: 10px 20px;
     background-color: #FF6347;
     color: white;
@@ -121,7 +121,7 @@ body {
 #url-list-container {
     margin-top: 70px;
     min-height: 150px; /* Altura mínima para mantener el espacio */
-     max-height: 300px; /* Ajusta esta altura según tus necesidades */
+    max-height: 300px; /* Ajusta esta altura según tus necesidades */
     overflow-y: auto;
 }
 
@@ -136,6 +136,7 @@ body {
     background: rgba(255, 255, 255, 0.8);
     font-weight: bold;
     padding: 10px;
+    font-family: 'Roboto', sans-serif; 
 }
 
 /* Contenedor para los botones */
@@ -205,10 +206,14 @@ button:hover{
 }
 
 
-/* Estilo para el título h2 */
+/* Estilo para el títulos */
+#h1 {
+    font-family: 'Roboto', sans-serif; 
+}
 #h2 {
     font-size: 15px;
     opacity: 0.4;
+    font-family: 'Roboto', sans-serif; 
 }
 
 /* Estilos para los botones de paginación 
@@ -257,6 +262,7 @@ button:hover{
     padding: 10px;
     text-align: center;
     margin-top: 25px;
+    font-family: 'Roboto', sans-serif; 
 }
 
 /* Posición fija para los botones en la esquina inferior derecha */
