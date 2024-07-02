@@ -14,7 +14,7 @@ function getHostName(url) {
     try {
         let hostname = new URL(url).hostname;
         return hostname;
-    } catch (error){
+    } catch (error) {
         return null;
     }
 }
@@ -25,18 +25,11 @@ function updateTotalTime(url, timeSpent) {
         chrome.storage.local.get(['totalTimePerSite'], function(result) {
             let totalTime = result.totalTimePerSite || {};
             totalTime[hostname] = (totalTime[hostname] || 0) + timeSpent;
-            chrome.storage.local.set({totalTimePerSite: totalTime}, function() {
+            chrome.storage.local.set({ totalTimePerSite: totalTime }, function() {
                 console.log(`Tiempo actualizado para ${hostname}: ${totalTime[hostname]} ms`);
             });
         });
     }
-}
-
-function convertMsToMinSec(milliseconds) {
-    let totalSeconds = Math.floor(milliseconds / 1000);
-    let minutes = Math.floor(totalSeconds / 60);
-    let seconds = totalSeconds % 60;
-    return `${minutes} min ${seconds} sec`;
 }
 
 chrome.tabs.onActivated.addListener(activeInfo => {
@@ -78,7 +71,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             }
             break;
         case 'continue':
-            if (!isPomodoroRunning && remainingTime > 0){
+            if (!isPomodoroRunning && remainingTime > 0) {
                 continuePomodoro();
             }
             break;
@@ -91,25 +84,31 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         case 'init':
             sendInitialState();
             break;
-    }
-    if (message.command === 'start') {
-        startPomodoro();
-    } else if (message.command === 'pause') {
-        pausePomodoro();
-    } else if (message.command === 'reset') {
-        resetPomodoro();
+        case 'block-url':
+            toggleUrlBlock(message.url);
+            closeTabsWithBlockedUrl(message.url);
+            break;
+        case 'closeTab':
+            chrome.tabs.remove(message.tabId);
+            break;
+        case 'add-url':
+            addUrl(message.url, sendResponse);
+            return true; // Indica que la respuesta será enviada de forma asíncrona
+        case 'get-urls':
+            getUrlList(sendResponse);
+            return true; // Indica que la respuesta será enviada de forma asíncrona
     }
 });
 
-function sendInitialState(){
-    chrome.storage.local.get('currentSessionType', function(data){
+function sendInitialState() {
+    chrome.storage.local.get('currentSessionType', function(data) {
         currentSessionType = data.currentSessionType || 'work';
         updateTimerDisplay(currentSessionType === 'work' ? WORK_TIME : BREAK_TIME);
     });
 }
 
 function playSound() {
-    chrome.runtime.sendMessage({command: "playSound"});
+    chrome.runtime.sendMessage({ command: "playSound" });
 }
 
 function showNotificationPomodoro(sessionType) {
@@ -122,13 +121,13 @@ function showNotificationPomodoro(sessionType) {
     };
 
     chrome.notifications.create(notificationOptions, function(notificationId) {
-        console.log("Notificacion mostrada para " + sessionType);
+        console.log("Notificación mostrada para " + sessionType);
     });
 }
 
-function updateTimerDisplay(remainingTime){
+function updateTimerDisplay(remainingTime) {
     let sessionLabel = currentSessionType === 'work' ? 'Trabajo' : 'Descanso';
-    chrome.runtime.sendMessage({timeLeft: remainingTime, sessionLabel: sessionLabel});
+    chrome.runtime.sendMessage({ timeLeft: remainingTime, sessionLabel: sessionLabel });
 }
 
 function startPomodoro() {
@@ -164,7 +163,7 @@ function startNewPomodoro(workTime, breakTime) {
     startPomodoro();
 }
 
-function continuePomodoro(){
+function continuePomodoro() {
     if (!isPomodoroRunning && remainingTime > 0) {
         startPomodoro();
     }
@@ -185,21 +184,21 @@ function resetPomodoro() {
         clearTimeout(pomodoroTimer);
         isPomodoroRunning = false;
         currentSessionType = 'work';
-        remainingTime = 0;  
+        remainingTime = 0;
         WORK_TIME = 30 * 60 * 1000;
         REST_TIME = 30 * 60 * 1000;
 
-        chrome.storage.local.set({'currentSessionType': currentSessionType});
+        chrome.storage.local.set({ 'currentSessionType': currentSessionType });
 
         updateTimerDisplay(WORK_TIME);
         console.log(`Pomodoro reseted`);
-        chrome.runtime.sendMessage({command: "resetUI"});
+        chrome.runtime.sendMessage({ command: "resetUI" });
     }
 }
 
 function handlePomodoroTimeout() {
     currentSessionType = currentSessionType === 'work' ? 'break' : 'work';
-    chrome.storage.local.set({'currentSessionType': currentSessionType});
+    chrome.storage.local.set({ 'currentSessionType': currentSessionType });
     console.log(currentSessionType === 'work' ? 'Descanso finalizado. Empieza la sesión de trabajo.' : 'Sesión de trabajo finalizada. Empezamos el descanso.');
 
     playSound();
@@ -226,18 +225,11 @@ function storeMessagesSequentially(messages) {
 
 // Agregar nuevas frases secuencialmente
 storeMessagesSequentially([
- "El tiempo es lo más valioso que una persona puede gastar.",
-
-"La forma en que gastas tu tiempo es más importante que la cantidad de tiempo que tienes.– Alan Lakein",
-
-
-"El que pospone el momento adecuado para mejorar su vida, es como el granjero que espera el río para cruzar.– Horace",
-
-
-"El tiempo perdido nunca se encuentra de nuevo.– Benjamin Franklin",
-
-
-"La procrastinación es el ladrón del tiempo, año tras año lo dice, hasta que todas sus disculpas se agoten.– Charles Dickens",
+    "El tiempo es lo más valioso que una persona puede gastar.",
+    "La forma en que gastas tu tiempo es más importante que la cantidad de tiempo que tienes.– Alan Lakein",
+    "El que pospone el momento adecuado para mejorar su vida, es como el granjero que espera el río para cruzar.– Horace",
+    "El tiempo perdido nunca se encuentra de nuevo.– Benjamin Franklin",
+    "La procrastinación es el ladrón del tiempo, año tras año lo dice, hasta que todas sus disculpas se agoten.– Charles Dickens",
 ]);
 
 // Almacenamiento de URLS
@@ -258,38 +250,56 @@ function getUrlList(sendResponse) {
     });
 }
 
-
 function getBlockedUrls(callback) {
     chrome.storage.local.get('urlList', function(data) {
         let urlList = data.urlList || [];
         callback(urlList);
     });
 }
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+
+function showPopupAndCloseTab(tabId, url) {
+    chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        func: (tabId) => {
+            alert("Este sitio web se encuentra bloqueado por Focusbloc. Se debe desbloquear desde la extensión");
+            chrome.runtime.sendMessage({ command: 'closeTab', tabId: tabId });
+        },
+        args: [tabId]
+    });
+}
+
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.url) {
-        getBlockedUrls(function(blockedUrls) {
+        getBlockedUrls(function (blockedUrls) {
             blockedUrls.forEach(blockedUrl => {
                 if (changeInfo.url.includes(blockedUrl)) {
-                    chrome.tabs.remove(tabId);
+                    showPopupAndCloseTab(tabId, changeInfo.url);
                 }
             });
         });
     }
 });
 
+function toggleUrlBlock(url) {
+    chrome.storage.local.get('blockedUrls', function(result) {
+        let blockedUrls = result.blockedUrls || [];
+        let index = blockedUrls.indexOf(url);
+        if (index === -1) {
+            blockedUrls.push(url);
+        } else {
+            blockedUrls.splice(index, 1);
+        }
+        chrome.storage.local.set({ blockedUrls: blockedUrls });
+    });
+}
+
 function closeTabsWithBlockedUrl(url) {
     chrome.tabs.query({}, function(tabs) {
-        tabs.forEach(tab => {
+        tabs.forEach(function(tab) {
             if (tab.url.includes(url)) {
-                chrome.tabs.remove(tab.id);
+                showPopupAndCloseTab(tab.id, tab.url);
             }
         });
     });
 }
-
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.command === 'block-url') {
-        toggleUrlBlock(message.url);
-        closeTabsWithBlockedUrl(message.url); // Llama a la función para cerrar pestañas con la URL bloqueada
-    }
-});

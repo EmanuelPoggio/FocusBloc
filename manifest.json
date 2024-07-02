@@ -12,7 +12,8 @@
         "chrome.runtime.sendMessage",
         "notifications",
         "chrome.notifications.create",
-        "tts"
+        "tts",
+        "scripting"
     ],
     "host_permissions": [
         "<all_urls>"
